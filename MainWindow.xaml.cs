@@ -21,6 +21,7 @@ namespace hhTraining
         {
             InitializeComponent();
             GetData(1);
+
         }
         async void GetData(int id)
         {            
