@@ -23,7 +23,7 @@
             <Label Content="Завершить" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"/>
             <TextBlock x:Name="question" TextWrapping="Wrap" Margin="10" Grid.Row="1" Grid.ColumnSpan="3"/>
             <StackPanel x:Name="answers" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"/>
-            <Button Width="100" Height="27" Grid.Row="3" Grid.Column="2" Content="Далее" HorizontalAlignment="Right" />
+            <Button x:Name="btnNext" Width="100" Height="27" Grid.Row="3" Grid.Column="2" Content="Далее" HorizontalAlignment="Right" Click="btnNext_Click" />
 
         </Grid>
     </StackPanel>

@@ -48,5 +48,9 @@ namespace hhTraining
             }
         }
 
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            GetData(2);
+        }
     }
 }
