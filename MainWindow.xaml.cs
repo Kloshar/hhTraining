@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ namespace hhTraining
     public partial class MainWindow : Window
     {
         string connectionString = @"Host=localhost;Username=postgres;Password=chistiyList;Database=hhtraining";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -25,13 +27,31 @@ namespace hhTraining
         }
         void startPostgreServer()
         {
-            var processInfo = new ProcessStartInfo("cmd.exe", );
+            Debug.WriteLine("Debug.WriteLine is working!");
 
+            ProcessStartInfo processInfo = new ProcessStartInfo();
+            processInfo.FileName = "cmd.exe";
+            processInfo.Arguments = "dir c:";
+            processInfo.CreateNoWindow = false; //не запускать новое окно
+            processInfo.WorkingDirectory = Environment.CurrentDirectory;
+            processInfo.UseShellExecute = false; //использовать стандартные потоки приложения            
+            processInfo.RedirectStandardOutput = true;
+            processInfo.RedirectStandardInput = true;           
 
+            Process p = Process.Start(processInfo);                       
 
+            using(StreamWriter sw = p.StandardInput)
+            {
+                sw.WriteLine("dir");
+                sw.WriteLine(Console.ReadLine());
+                p.WaitForExit();
+            }            
 
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+
+            Debug.WriteLine(output);
         }
-
 
         async void GetData(int id)
         {            
@@ -58,6 +78,5 @@ namespace hhTraining
                 }
             }
         }
-
     }
 }
