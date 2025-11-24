@@ -20,8 +20,19 @@ namespace hhTraining
         public MainWindow()
         {
             InitializeComponent();
-            GetData(1);
+            //GetData(1);
+            startPostgreServer();
         }
+        void startPostgreServer()
+        {
+            var processInfo = new ProcessStartInfo("cmd.exe", );
+
+
+
+
+        }
+
+
         async void GetData(int id)
         {            
             await using var dataSource = NpgsqlDataSource.Create(connectionString);
