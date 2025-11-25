@@ -32,6 +32,7 @@ namespace hhTraining
                 {
                     string text = reader.GetValue(0).ToString();
                     question.Text = text;
+
                 }
             }
             await using (var cmd = dataSource.CreateCommand("SELECT text FROM answers WHERE questionid = " + id))
