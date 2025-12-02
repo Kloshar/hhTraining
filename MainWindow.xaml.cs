@@ -12,18 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 namespace hhTraining
 {
     public partial class MainWindow : Window
     {
         string connectionString = @"Host=localhost;Username=postgres;Password=chistiyList;Database=hhtraining";
+        int currentQuestion;
 
         public MainWindow()
         {
             InitializeComponent();
-            //GetData(1);
-            startPostgreServer();
+            currentQuestion = 1;
+            GetData(currentQuestion);
+            //startPostgreServer();
         }
         void startPostgreServer()
         {
@@ -51,23 +52,27 @@ namespace hhTraining
             p.WaitForExit();
 
             Debug.WriteLine(output);
-        }
-
+        } //попытка запустить локальный сервер
         async void GetData(int id)
         {            
             await using var dataSource = NpgsqlDataSource.Create(connectionString);
-            await using (var cmd = dataSource.CreateCommand("SELECT text FROM questions WHERE id = " + id))
-            await using (var reader = await  cmd.ExecuteReaderAsync()) 
-            {
+            //чтение вопроса из таблицы questions
+            await using (var cmd = dataSource.CreateCommand("SELECT text FROM questions WHERE id = " + id)) 
+            await using (var reader = await  cmd.ExecuteReaderAsync())
+            {                
                 while (reader.Read())
                 {
+                    
                     string text = reader.GetValue(0).ToString();
+                    Debug.WriteLine($"{text}");
                     question.Text = text;
                 }
             }
+            //чтение ответов из таблицы answers
             await using (var cmd = dataSource.CreateCommand("SELECT text FROM answers WHERE questionid = " + id))
             await using (var reader = await cmd.ExecuteReaderAsync())
             {
+                answers.Children.Clear();
                 while (reader.Read())
                 {
                     string text = reader.GetValue(0).ToString();
@@ -77,6 +82,28 @@ namespace hhTraining
                     answers.Children.Add(radioButton);
                 }
             }
+        } //запрос данных по номеру
+        private void btnAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            //соединяемся с бд
+
+            //
+
+
+            checkName.Content = "Да";
+        }
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            currentQuestion += 1;
+            //Debug.WriteLine(currentQuestion);
+            GetData(currentQuestion);
+        }
+
+        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            currentQuestion -= 1;
+            //Debug.WriteLine(currentQuestion);
+            GetData(currentQuestion);
         }
     }
 }
