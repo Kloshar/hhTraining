@@ -1,0 +1,36 @@
+﻿<Window x:Name="AddQuestionWindow" x:Class="hhTraining.AddingNewQuestions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:hhTraining"
+        mc:Ignorable="d"
+        Title="AddingNewQuestions" Height="450" Width="800" Closing="AddQuestionWindow_Closing">
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0">Тема</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="0">Номер вопроса</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="0">Вопрос</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0">Код</TextBlock>
+        <TextBlock Grid.Row="4" Grid.Column="0">Ответы (разделитель: '\n')</TextBlock>
+        <TextBox x:Name="themeBox" Grid.Row="0" Grid.Column="1" Background="WhiteSmoke" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="numberBox" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="questionBox" Grid.Row="2" Grid.Column="1" Background="WhiteSmoke" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="codeBox" Grid.Row="3" Grid.Column="1" Background="WhiteSmoke" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="answersBox" Grid.Row="4" Grid.Column="1" Background="WhiteSmoke" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" />
+
+        <Button x:Name="SaveToDB" Grid.Row="5" Grid.Column="0" Width="100" Height="30" Content="Добавить в БД" Grid.ColumnSpan="2" Click="SaveToDB_Click"/>
+    </Grid>
+</Window>

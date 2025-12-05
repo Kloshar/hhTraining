@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "hhTraining": {
+      "commandName": "Project",
+      "commandLineArgs": "-a"
+    }
+  }
+}

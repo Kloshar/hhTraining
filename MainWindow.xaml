@@ -21,13 +21,16 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Content="Git" Grid.Row="0" Grid.Column="0"/>
-            <Label Content="Завершить" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"/>
-            <TextBlock x:Name="question" TextWrapping="Wrap" Margin="10" Grid.Row="1" Grid.ColumnSpan="3"/>
+            <Label Content="Завершить" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"/>            
+            <StackPanel x:Name="question" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="10">
+                <TextBlock x:Name="questionText" TextWrapping="Wrap" Margin="10"/>
+                <TextBlock x:Name="questionCode" TextWrapping="Wrap" Margin="10"/>
+            </StackPanel>
             <StackPanel x:Name="answers" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"/>
-            <Button x:Name="btnPrevious" Width="100" Height="27" Grid.Row="3" Grid.Column="0" Content="Назад" HorizontalAlignment="Right" Click="btnPrevious_Click" />
-            <Button x:Name="btnAnswer" Width="100" Height="27" Grid.Row="3" Grid.Column="1" Content="Ответить" HorizontalAlignment="Right" Click="btnAnswer_Click" />
+            <Button x:Name="btnPrevious" Width="100" Height="27" Grid.Row="3" Grid.Column="0" Content="Назад" HorizontalAlignment="Left" Click="btnPrevious_Click" />
+            <Button x:Name="btnAnswer" Width="100" Height="27" Grid.Row="3" Grid.Column="1" Content="Ответить" HorizontalAlignment="Center" Click="btnAnswer_Click" IsEnabled="False" />
             <Button x:Name="btnNext" Width="100" Height="27" Grid.Row="3" Grid.Column="2" Content="Далее" HorizontalAlignment="Right" Click="btnNext_Click" />
-            <Label x:Name="checkName" Grid.Row="4" Grid.Column="0"/>
+            <TextBlock x:Name="checkName" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="10" />
         </Grid>
     </StackPanel>
 </Window>

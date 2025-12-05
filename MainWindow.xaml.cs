@@ -3,6 +3,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,8 +23,8 @@ namespace hhTraining
         public MainWindow()
         {
             InitializeComponent();
-            currentQuestion = 1;
-            GetData(currentQuestion);
+            currentQuestion = 1; //текущий номер вопроса
+            GetData(currentQuestion); //загрузка первого вопроса
             //startPostgreServer();
         }
         void startPostgreServer()
@@ -53,57 +54,106 @@ namespace hhTraining
 
             Debug.WriteLine(output);
         } //попытка запустить локальный сервер
-        async void GetData(int id)
+        async Task<int> GetData(int id)
         {            
             await using var dataSource = NpgsqlDataSource.Create(connectionString);
             //чтение вопроса из таблицы questions
-            await using (var cmd = dataSource.CreateCommand("SELECT text FROM questions WHERE id = " + id)) 
+            await using (var cmd = dataSource.CreateCommand("SELECT text, code FROM questions WHERE id = " + id))
             await using (var reader = await  cmd.ExecuteReaderAsync())
             {                
                 while (reader.Read())
-                {
-                    
+                {                    
                     string text = reader.GetValue(0).ToString();
-                    Debug.WriteLine($"{text}");
-                    question.Text = text;
+                    string code = reader.GetValue(1).ToString();
+                    questionText.Text = text;
+                    if(code != "")
+                    {
+                        questionCode.Visibility = Visibility.Visible;
+                        questionCode.Text = code;
+                    }
+                    else
+                    {
+                        questionCode.Visibility = Visibility.Collapsed;
+                    }                    
                 }
             }
             //чтение ответов из таблицы answers
             await using (var cmd = dataSource.CreateCommand("SELECT text FROM answers WHERE questionid = " + id))
             await using (var reader = await cmd.ExecuteReaderAsync())
             {
-                answers.Children.Clear();
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    string text = reader.GetValue(0).ToString();
-                    //Debug.WriteLine($"{reader.GetValue(0)}");
-                    RadioButton radioButton = new RadioButton();
-                    radioButton.Content = text;
-                    answers.Children.Add(radioButton);
+                    answers.Children.Clear();
+                    while (reader.Read())
+                    {
+                        string text = reader.GetValue(0).ToString();
+                        RadioButton radioButton = new RadioButton();
+                        radioButton.Content = text;
+                        radioButton.Checked += (sender, args) => btnAnswer.IsEnabled = true;
+                        answers.Children.Add(radioButton);
+                    }
                 }
+                else return 0;
+                return currentQuestion;
             }
-        } //запрос данных по номеру
-        private void btnAnswer_Click(object sender, RoutedEventArgs e)
+        } //получение данных вопроса и ответов по номеру
+        private async void btnAnswer_Click(object sender, RoutedEventArgs e)
         {
             //соединяемся с бд
-
-            //
-
-
-            checkName.Content = "Да";
-        }
-        private void btnNext_Click(object sender, RoutedEventArgs e)
+            await using var dataSource = NpgsqlDataSource.Create(connectionString);
+            await using (var cmd = dataSource.CreateCommand($"SELECT text FROM answers WHERE questionid = {currentQuestion} AND isright = TRUE"))
+            await using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    string rightAnswer = reader.GetValue(0).ToString();
+                    checkName.Text = "Правильный ответ: " + rightAnswer;
+                    foreach(RadioButton rb in answers.Children)
+                    {
+                        if(rb.IsChecked == true)
+                        {
+                            string textAnswer = rb.Content.ToString();
+                            Border border = new Border();
+                            if (rb.Content.ToString() == rightAnswer) border.Background = Brushes.GreenYellow;
+                            else border.Background = Brushes.Red;
+                            TextBlock tb = new TextBlock();
+                            tb.Text = textAnswer;
+                            border.Child = tb;
+                            rb.Content = border;
+                        }
+                    }
+                }
+            }
+            answers.IsEnabled = false;
+            ((Button)sender).IsEnabled = false;
+        } //проверка ответа
+        private async void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            currentQuestion += 1;
-            //Debug.WriteLine(currentQuestion);
-            GetData(currentQuestion);
-        }
-
-        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+            currentQuestion += 1; //прибавляем текущее значение
+            if (await GetData(currentQuestion) == 0) //если возвращается ноль
+            {
+                currentQuestion -= 1; //то убавляем обратно
+            }
+            else
+            {
+                checkName.Text = "";
+                btnAnswer.IsEnabled = true;
+                answers.IsEnabled = true;
+            }                
+        } //обработчик кнопки следующий вопрос
+        private async void btnPrevious_Click(object sender, RoutedEventArgs e)
         {
             currentQuestion -= 1;
-            //Debug.WriteLine(currentQuestion);
-            GetData(currentQuestion);
-        }
+            if(await GetData(currentQuestion) == 0)
+            {
+                currentQuestion += 1;
+            }
+            else
+            {
+                checkName.Text = "";
+                btnAnswer.IsEnabled = true;
+                answers.IsEnabled = true;
+            }
+        } //обработчик кнопки предыдущий вопрос
     }
 }
